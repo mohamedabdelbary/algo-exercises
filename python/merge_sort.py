@@ -40,8 +40,9 @@ def merge_sort(li):
     if len(li) == 2:
         return [li[0], li[1]] if li[0] < li[1] else [li[1], li[0]]
 
-    left = merge_sort(li[:len(li) // 2])
-    right = merge_sort(li[len(li) // 2:])
+    mid = len(li) // 2
+    left = merge_sort(li[: mid])
+    right = merge_sort(li[mid:])
 
     return _merge(left, right)
 
