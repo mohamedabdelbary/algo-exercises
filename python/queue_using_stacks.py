@@ -13,31 +13,41 @@ class Queue(object):
         self._count = 0
 
     def enqueue(self, element):
+        """
+        - If the queue stack is empty, then empty the tmp stack
+        into it.
+        - Otherwise push the new element onto the tmp stack
+        """
+        self._tmp_stack.push(element)
         if self._queue_stack.is_empty():
-            self._queue_stack.push(element)
-        else:
-            """
-            - empty queue stack into tmp stack
-              (tmp stack is now in wrong order)
-            - push new element into queue stack
-            - empty tmp stack back into queue stack
-              (queue stack is now in FIFO order)
-            """
-            self._move_stack(self._queue_stack, self._tmp_stack)
-            self._queue_stack.push(element)
             self._move_stack(self._tmp_stack, self._queue_stack)
 
         self._count += 1
 
     def dequeue(self):
+        """
+        Always dequeue from the queue stack
+        """
         if self._queue_stack.is_empty():
-            return None
-        self._count -= 1
-        return self._queue_stack.pop()
+            if not self._tmp_stack.is_empty():
+                self._move_stack(self._tmp_stack, self._queue_stack)
+                self._count -= 1
+                return self._queue_stack.pop()
+            else:
+                return None
+        else:
+            self._count -= 1
+            return self._queue_stack.pop()
 
     @property
     def head(self):
-        return None if self._queue_stack.is_empty() else self._queue_stack.peek()
+        if not self._queue_stack.is_empty():
+            return self._queue_stack.peek()
+        elif not self._tmp_stack.is_empty():
+            self._move_stack(self._tmp_stack, self._queue_stack)
+            return self._tmp_stack.peek()
+        else:
+            return None
 
     @property
     def count(self):
